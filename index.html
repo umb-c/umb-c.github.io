@@ -56,7 +56,7 @@
   @keyframes rb { to { background-position: 300% 0; } }
   @media (prefers-reduced-motion: reduce) { .rainbow { animation: none; } html { scroll-behavior: auto; } }
   .hint { color: var(--muted); font-size: 13px; text-align: right; }
-  #gyro { pointer-events: auto; display: none; margin-top: 8px; font-size: 13px; background: transparent; border: 1px solid var(--muted); border-radius: 999px; padding: 6px 14px; }
+  #gyro { pointer-events: auto; display: none; margin-top: 8px; font-size: 14px; font-weight: 600; background: var(--fg); color: var(--bg); border: 0; border-radius: 999px; padding: 9px 18px; }
 
   /* ---------- SEZIONI ---------- */
   main { max-width: 1100px; margin: 0 auto; padding: 0 var(--gutter-r) 0 var(--gutter-l); }
@@ -128,7 +128,7 @@
     </div>
     <div class="hint">
       <span class="h-text"><span data-i18n="hint1">move your mouse or tilt your phone</span></span>
-      <br><button id="gyro" type="button" data-i18n="gyro">enable motion</button>
+      <br><button id="gyro" type="button" data-i18n="gyro">Enable motion</button>
     </div>
   </div>
 </header>
@@ -209,7 +209,7 @@ const SECTIONS = [
 const I18N = {
   en: {
     nav_work: 'Work', nav_about: 'About', nav_contact: 'Contact', work: 'Work', about: 'About', contact: 'Contact',
-    tagline: 'I imagine and create.', hint1: 'move your mouse or tilt your phone', gyro: 'enable motion',
+    tagline: 'I imagine and create.', hint1: 'move your mouse or tilt your phone', gyro: 'Enable motion',
     where: 'Naples · 1981',
     bio1: 'Born in Naples in 1981. I fell for computers as a kid and never got out. My first program was a text adventure that only I could finish, and I took apart every machine in the house to see where the noises came from.',
     bio2: 'Today I experiment with local AI and use it to improve production processes: models running on our own hardware, wired into the real work of getting things made.',
@@ -217,7 +217,7 @@ const I18N = {
   },
   it: {
     nav_work: 'Lavori', nav_about: 'Chi sono', nav_contact: 'Contatti', work: 'Lavori', about: 'Chi sono', contact: 'Contatti',
-    tagline: 'Immagino e creo.', hint1: 'muovi il mouse o inclina il telefono', gyro: 'attiva sensori',
+    tagline: 'Immagino e creo.', hint1: 'muovi il mouse o inclina il telefono', gyro: 'Attiva i sensori',
     where: 'Napoli · 1981',
     bio1: 'Nato a Napoli nel 1981. Da bambino mi sono innamorato dei computer e non ne sono più uscito. Il mio primo programma è stata un’avventura testuale che riuscivo a finire solo io, e smontavo ogni macchina di casa per capire da dove venivano i rumori.',
     bio2: 'Oggi sperimento l’AI locale e la uso per migliorare i processi produttivi: modelli che girano sul nostro hardware, collegati al lavoro vero di chi produce.',
@@ -427,6 +427,7 @@ if (window.DeviceOrientationEvent) {
   if (typeof DeviceOrientationEvent.requestPermission === 'function' && matchMedia('(pointer: coarse)').matches) {   // iPhone: serve un gesto dell'utente
     gyroBtn.style.display = 'inline-block';
     gyroBtn.addEventListener('click', askTilt);
+    DeviceOrientationEvent.requestPermission().catch(() => {});             // se Safari ha già il permesso per questo sito, i sensori partono da soli
     document.addEventListener('click', () => { if (!tiltAsked && tiltEvents === 0) askTilt(); }, true);   // anche il primo tocco qualsiasi chiede il permesso
   }
   if (dbg) setTimeout(() => { if (!tiltEvents) dbg.textContent = 'nessun evento dal sensore (permesso negato o sensore non disponibile)'; }, 3000);
