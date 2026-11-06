@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Umberto Portfolio</title>
+<meta name="description" content="Umberto. Art, web, apps and marketing. I imagine and create.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --fg: #111111;
+    --muted: #6c6c69;
+    --line: #e4e4e1;
+    --card: #f5f5f3;
+    --display: "Archivo Black", Impact, "Arial Black", system-ui, sans-serif;
+    --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+    --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.lock { overflow: hidden; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+  /* ---------- NAV ---------- */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; gap: 2px; justify-content: center; align-items: center; flex-wrap: wrap;
+        padding: 10px var(--gutter-r) 10px var(--gutter-l); background: linear-gradient(var(--bg) 55%, rgba(255,255,255,0)); }
+  nav button { background: none; border: 0; font-size: 13px; color: var(--muted); padding: 4px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+  nav button:hover { color: var(--fg); background: var(--card); }
+  .lang { display: inline-flex; margin-left: 10px; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .lang button { border-radius: 0; padding: 3px 10px; font-size: 12px; letter-spacing: .06em; }
+  .lang button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; height: min(96svh, 980px); min-height: 560px; overflow: hidden; }
+  #face { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: crosshair; }
+  .hero-text { position: absolute; left: 0; right: 0; bottom: 0; max-width: 1100px; margin: 0 auto; pointer-events: none;
+               padding: 0 var(--gutter-r) 26px var(--gutter-l); display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+  h1 { margin: 0; font: 400 clamp(48px, 9vw, 112px)/0.9 var(--display); letter-spacing: -0.02em; }
+  .tagline { margin: 10px 0 0; font: 400 clamp(20px, 3.6vw, 34px)/1.1 var(--display); }
+  .rainbow {
+    background: linear-gradient(90deg, #ff3b3b, #ff9f1c, #ffd60a, #2ecc71, #18c7d9, #3b82f6, #9b5cff, #ff3bd4, #ff3b3b);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent; animation: rb 7s linear infinite;
+  }
+  @keyframes rb { to { background-position: 300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .rainbow { animation: none; } html { scroll-behavior: auto; } }
+  .hint { color: var(--muted); font-size: 13px; text-align: right; }
+  #gyro { pointer-events: auto; display: none; margin-top: 8px; font-size: 13px; background: transparent; border: 1px solid var(--muted); border-radius: 999px; padding: 6px 14px; }
+
+  /* ---------- SEZIONI ---------- */
+  main { max-width: 1100px; margin: 0 auto; padding: 0 var(--gutter-r) 0 var(--gutter-l); }
+  section { padding-top: 72px; margin-top: 56px; border-top: 1px solid var(--line); }
+  h2 { margin: 0 0 28px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+  .sec-card { position: relative; display: block; width: 100%; text-align: left; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); transition: border-color .2s, transform .2s; }
+  .sec-card:hover { border-color: var(--fg); transform: translateY(-3px); }
+  .sec-card .art { aspect-ratio: 4 / 3; }
+  .sec-card .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 18px 18px; background: var(--bg); border-top: 1px solid var(--line); }
+  .sec-card h3 { margin: 0; font: 400 22px/1.15 var(--display); }
+  .sec-card .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+  /* immagini segnaposto: retino di punti, come il ritratto */
+  .art { position: relative; overflow: hidden; background: var(--card); }
+  .art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .art.ph::before { content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, var(--fg) var(--d, 1.6px), transparent calc(var(--d, 1.6px) + .6px)); background-size: var(--g, 14px) var(--g, 14px);
+    -webkit-mask-image: linear-gradient(var(--a, 135deg), #000, transparent 88%); mask-image: linear-gradient(var(--a, 135deg), #000, transparent 88%); opacity: .85; }
+
+  .about { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; max-width: 680px; }
+  .about p { margin: 0; font-size: 18px; }
+  .about .where { color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+  .contact-note { font-size: 18px; margin: 0; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 72px var(--gutter-r) 40px var(--gutter-l); color: var(--muted); font-size: 13px; }
+
+  /* ---------- DETTAGLIO SEZIONE ---------- */
+  #detail { position: fixed; inset: 0; z-index: 50; background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
+            padding: 0 var(--gutter-r) 48px var(--gutter-l); }
+  #detail[hidden] { display: none; }
+  .d-inner { max-width: 1100px; margin: 0 auto; }
+  .d-bar { position: sticky; top: 0; padding: calc(12px + env(safe-area-inset-top, 0px)) 0 12px; background: var(--bg); z-index: 2; }
+  .back { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 18px; font-size: 14px; }
+  .back:hover { border-color: var(--fg); }
+  .d-inner h2.d-title { margin: 24px 0 8px; font: 400 clamp(36px, 7vw, 72px)/1 var(--display); letter-spacing: -0.01em; text-transform: none; color: var(--fg); }
+  .d-intro { margin: 0 0 32px; max-width: 560px; color: var(--muted); font-size: 18px; }
+  .items { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); }
+  .item { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--bg); text-decoration: none; }
+  a.item:hover { border-color: var(--fg); }
+  .item .art { aspect-ratio: 4 / 3; border-bottom: 1px solid var(--line); }
+  .item .body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .item h3 { margin: 0; font-size: 18px; font-weight: 700; }
+  .item p { margin: 0; color: var(--muted); font-size: 15px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tags span { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+
+  @media (max-width: 560px) { .hint .h-text { display: none; } nav button { padding: 4px 8px; } .lang { margin-left: 4px; } }
+</style>
+</head>
+<body>
+
+<nav aria-label="Sections">
+  <button type="button" data-go="work" data-i18n="nav_work">Work</button>
+  <button type="button" data-go="about" data-i18n="nav_about">About</button>
+  <button type="button" data-go="contact" data-i18n="nav_contact">Contact</button>
+  <span class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="it" aria-pressed="false">IT</button>
+    <button type="button" data-lang="en" aria-pressed="true">EN</button>
+  </span>
+</nav>
+
+<header class="hero">
+  <canvas id="face" aria-label="Portrait of Umberto made of particles. The eyes follow your cursor and the face changes expression when you click it."></canvas>
+  <div class="hero-text">
+    <div>
+      <h1>Umberto</h1>
+      <p class="tagline rainbow" data-i18n="tagline">I imagine and create.</p>
+    </div>
+    <div class="hint">
+      <span class="h-text"><span data-i18n="hint1">move your mouse or tilt your phone</span></span>
+      <br><button id="gyro" type="button" data-i18n="gyro">enable motion</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="work" style="margin-top:0;border-top:0;padding-top:48px">
+    <h2 data-i18n="work">Work</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section id="about">
+    <h2 data-i18n="about">About</h2>
+    <div class="about">
+      <p class="where" data-i18n="where">Naples · 1981</p>
+      <p data-i18n="bio1"></p>
+      <p data-i18n="bio2"></p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2 data-i18n="contact">Contact</h2>
+    <p class="contact-note" data-i18n="contact_note">Contact details coming soon.</p>
+  </section>
+</main>
+<footer>© <span id="year"></span> Umberto · <span data-i18n="footer">Made of particles</span></footer>
+
+<div id="detail" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+  <div class="d-inner">
+    <div class="d-bar"><button type="button" class="back" id="back"></button></div>
+    <h2 class="d-title" id="d-title"></h2>
+    <p class="d-intro" id="d-intro"></p>
+    <div class="items" id="items"></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONTENUTI: modifica qui testi, sezioni e progetti.
+   Ogni elemento può avere  img: 'images/nome.jpg'  e  link: 'https://...'
+   ===================================================================== */
+const PH = 'Short description goes here.';
+const PH_IT = 'Breve descrizione da inserire.';
+const SECTIONS = [
+  { id: 'art-design', title: { en: 'Art & Design', it: 'Arte e Design' },
+    intro: { en: 'Illustration, visual identity and experiments.', it: 'Illustrazione, identità visiva ed esperimenti.' }, cover: null, dots: ['1.8px', '13px', '135deg'],
+    items: [
+      { title: { en: 'Artwork 01', it: 'Opera 01' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Artwork 02', it: 'Opera 02' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Artwork 03', it: 'Opera 03' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Artwork 04', it: 'Opera 04' }, desc: { en: PH, it: PH_IT } },
+    ] },
+  { id: 'web', title: { en: 'Web', it: 'Web' },
+    intro: { en: 'Websites and Shopify themes, designed and built end to end.', it: 'Siti web e temi Shopify, progettati e sviluppati da zero.' }, cover: null, dots: ['2.2px', '16px', '200deg'],
+    items: [
+      { title: { en: 'Website name', it: 'Nome del sito' }, desc: { en: PH, it: PH_IT }, tags: ['Website'] },
+      { title: { en: 'Website name', it: 'Nome del sito' }, desc: { en: PH, it: PH_IT }, tags: ['Website'] },
+      { title: { en: 'Shopify theme', it: 'Tema Shopify' }, desc: { en: PH, it: PH_IT }, tags: ['Shopify', 'Liquid'] },
+      { title: { en: 'Shopify theme', it: 'Tema Shopify' }, desc: { en: PH, it: PH_IT }, tags: ['Shopify', 'Liquid'] },
+    ] },
+  { id: 'apps-tools', title: { en: 'Apps & Tools', it: 'App e Strumenti' },
+    intro: { en: 'Software built to solve real problems.', it: 'Software creato per risolvere problemi reali.' }, cover: null, dots: ['1.4px', '11px', '160deg'],
+    items: [
+      { title: 'Lamape Ops', desc: { en: PH, it: PH_IT }, tags: ['Tool'] },
+      { title: 'Lesto', desc: { en: PH, it: PH_IT }, tags: ['App'] },
+      { title: 'WooCommerce Pusher', desc: { en: PH, it: PH_IT }, tags: ['WooCommerce', 'Plugin'] },
+      { title: { en: 'Another project', it: 'Un altro progetto' }, desc: { en: PH, it: PH_IT }, tags: ['Tool'] },
+    ] },
+  { id: 'marketing', title: { en: 'Marketing', it: 'Marketing' },
+    intro: { en: 'Ad creatives and campaigns.', it: 'Creatività pubblicitarie e campagne.' }, cover: null, dots: ['2.6px', '18px', '120deg'],
+    items: [
+      { title: { en: 'Ad creative 01', it: 'Inserzione 01' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Ad creative 02', it: 'Inserzione 02' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Ad creative 03', it: 'Inserzione 03' }, desc: { en: PH, it: PH_IT } },
+      { title: { en: 'Ad creative 04', it: 'Inserzione 04' }, desc: { en: PH, it: PH_IT } },
+    ] },
+];
+
+const I18N = {
+  en: {
+    nav_work: 'Work', nav_about: 'About', nav_contact: 'Contact', work: 'Work', about: 'About', contact: 'Contact',
+    tagline: 'I imagine and create.', hint1: 'move your mouse or tilt your phone', gyro: 'enable motion',
+    where: 'Naples · 1981',
+    bio1: 'Born in Naples in 1981. I fell for computers as a kid and never got out. My first program was a text adventure that only I could finish, and I took apart every machine in the house to see where the noises came from.',
+    bio2: 'Today I experiment with local AI and use it to improve production processes: models running on our own hardware, wired into the real work of getting things made.',
+    contact_note: 'Contact details coming soon.', footer: 'Made of particles', back: '← Back', one: 'project', many: 'projects',
+  },
+  it: {
+    nav_work: 'Lavori', nav_about: 'Chi sono', nav_contact: 'Contatti', work: 'Lavori', about: 'Chi sono', contact: 'Contatti',
+    tagline: 'Immagino e creo.', hint1: 'muovi il mouse o inclina il telefono', gyro: 'attiva sensori',
+    where: 'Napoli · 1981',
+    bio1: 'Nato a Napoli nel 1981. Da bambino mi sono innamorato dei computer e non ne sono più uscito. Il mio primo programma è stata un’avventura testuale che riuscivo a finire solo io, e smontavo ogni macchina di casa per capire da dove venivano i rumori.',
+    bio2: 'Oggi sperimento l’AI locale e la uso per migliorare i processi produttivi: modelli che girano sul nostro hardware, collegati al lavoro vero di chi produce.',
+    contact_note: 'Contatti in arrivo.', footer: 'Fatto di particelle', back: '← Indietro', one: 'progetto', many: 'progetti',
+  },
+};
+
+/* ---------- lingua, schede e dettaglio ---------- */
+let lang = 'en';
+try { lang = localStorage.getItem('lang') || ''; } catch (_) {}
+if (lang !== 'it' && lang !== 'en') lang = /^it/i.test(navigator.language || '') ? 'it' : 'en';
+const tr = (x) => (typeof x === 'string' ? x : x[lang]);
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.textContent = html; return e; };
+
+function art(src, dots, alt) {
+  const d = el('div', 'art' + (src ? '' : ' ph'));
+  if (src) { const i = new Image(); i.src = src; i.alt = alt || ''; i.loading = 'lazy'; d.appendChild(i); }
+  else if (dots) { d.style.setProperty('--d', dots[0]); d.style.setProperty('--g', dots[1]); d.style.setProperty('--a', dots[2]); }
+  return d;
+}
+function renderCards() {
+  const box = $('#cards'); box.textContent = '';
+  SECTIONS.forEach((s) => {
+    const b = el('button', 'sec-card'); b.type = 'button'; b.addEventListener('click', () => { location.hash = s.id; });
+    b.appendChild(art(s.cover, s.dots, tr(s.title)));
+    const m = el('div', 'meta'); m.appendChild(el('h3', '', tr(s.title)));
+    m.appendChild(el('span', 'count', s.items.length + ' ' + (s.items.length === 1 ? I18N[lang].one : I18N[lang].many) + ' →'));
+    b.appendChild(m); box.appendChild(b);
+  });
+}
+let lastFocus = null;
+function renderDetail() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  const s = SECTIONS.find((x) => x.id === id), d = $('#detail');
+  if (!s) { if (!d.hidden) { d.hidden = true; document.body.classList.remove('lock'); if (lastFocus) lastFocus.focus(); } return; }
+  const opening = d.hidden;
+  $('#d-title').textContent = tr(s.title); $('#d-intro').textContent = tr(s.intro); $('#back').textContent = I18N[lang].back;
+  const box = $('#items'); box.textContent = '';
+  s.items.forEach((it, n) => {
+    const card = it.link ? el('a', 'item') : el('div', 'item');
+    if (it.link) { card.href = it.link; card.rel = 'noopener'; }
+    card.appendChild(art(it.img, s.dots.map((v, k) => (k === 2 ? (100 + n * 37) + 'deg' : v)), tr(it.title)));
+    const b = el('div', 'body'); b.appendChild(el('h3', '', tr(it.title)));
+    if (it.desc) b.appendChild(el('p', '', tr(it.desc)));
+    if (it.tags && it.tags.length) { const t = el('div', 'tags'); it.tags.forEach((x) => t.appendChild(el('span', '', x))); b.appendChild(t); }
+    card.appendChild(b); box.appendChild(card);
+  });
+  d.hidden = false; document.body.classList.add('lock');
+  if (opening) { lastFocus = document.activeElement; d.scrollTop = 0; $('#back').focus(); }
+}
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((e) => { const v = I18N[lang][e.dataset.i18n]; if (v != null) e.textContent = v; });
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  renderCards(); renderDetail();
+}
+document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => { lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (_) {} applyLang(); }));
+document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
+  if (location.hash) location.hash = '';
+  const t = document.getElementById(b.dataset.go); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}));
+$('#back').addEventListener('click', () => { location.hash = ''; });
+window.addEventListener('hashchange', renderDetail);
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#detail').hidden) location.hash = ''; });
+$('#year').textContent = new Date().getFullYear();
+applyLang();
+
+/* =====================================================================
+   RITRATTO DI PARTICELLE
+   - ogni particella nasce da un pixel scuro di assets/head-art.png
+   - niente è fisso: tutto respira, si scosta al passaggio del cursore e si ricompone
+   - gli occhi seguono il puntatore, battono le ciglia, le sopracciglia si alzano, il sorriso si allarga
+   Coordinate in pixel dell'immagine (768 x 1024).
+   ===================================================================== */
+const CONFIG = {
+  art: 'assets/head-art.png',
+  maxParticles: 30000,                                   // tetto di particelle (più alto = più dettaglio, più pesante)
+  eyeL: { x: 232, y: 492, r: 25, cx: 226, cy: 490, hw: 78, hh: 24 },   // occhio a sinistra di chi guarda
+  eyeR: { x: 520, y: 500, r: 27, cx: 505, cy: 498, hw: 70, hh: 28 },
+  browL: { x: 225, y: 428, hw: 100, hh: 30 },
+  browR: { x: 515, y: 442, hw: 115, hh: 36 },
+  mouth: { x: 388, y: 792, hw: 125, hh: 40 },
+  center: { x: 385, y: 500 },                            // centro del volto per lo sguardo
+};
+
+const canvas = document.getElementById('face');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1, scale = 1, ox = 0, oy = 0, IW = 768, IH = 1024, P = null, N = 0;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const bell = (d) => { const t = clamp(1 - d * d, 0, 1); return t * t; };
+
+function build(img) {
+  IW = img.naturalWidth; IH = img.naturalHeight;
+  const off = document.createElement('canvas'); off.width = IW; off.height = IH;
+  const o = off.getContext('2d', { willReadFrequently: true });
+  o.drawImage(img, 0, 0);
+  const data = o.getImageData(0, 0, IW, IH).data;
+  const dk = (x, y) => 1 - data[((clamp(Math.round(y), 0, IH - 1) * IW) + clamp(Math.round(x), 0, IW - 1)) * 4] / 255;
+
+  let dark = 0; for (let i = 0; i < IW * IH; i++) if (data[i * 4] < 128) dark++;
+  const step = Math.max(2, Math.sqrt(dark / CONFIG.maxParticles));
+  const { eyeL, eyeR, browL, browR, mouth } = CONFIG;
+  const A = { hx: [], hy: [], rad: [], ph: [], wiL: [], wiR: [], wlL: [], wlR: [], wbL: [], wbR: [], wm: [], mdx: [] };
+  const rnd = Math.random;
+
+  for (let y = 0; y < IH; y += step) for (let x = 0; x < IW; x += step) {
+    const d = (dk(x, y) + dk(x + step / 2, y) + dk(x, y + step / 2) + dk(x + step / 2, y + step / 2)) / 4;
+    if (rnd() > smooth(0.10, 0.60, d)) continue;
+    const hx = x + rnd() * step, hy = y + rnd() * step;
+    A.hx.push(hx); A.hy.push(hy); A.rad.push(step * (0.30 + 0.46 * d)); A.ph.push(rnd() * 6.2832);
+    // iridi
+    const wi = (e) => 1 - smooth(e.r * 0.85, e.r * 1.2, Math.hypot(hx - e.x, hy - e.y));
+    A.wiL.push(wi(eyeL)); A.wiR.push(wi(eyeR));
+    // palpebre
+    const lid = (e) => { const u = Math.abs(hx - e.cx) / e.hw, v = Math.abs(hy - e.cy) / e.hh; return u < 1 && v < 1 ? bell(u) * bell(v) : 0; };
+    A.wlL.push(lid(eyeL)); A.wlR.push(lid(eyeR));
+    // sopracciglia
+    const br = (e) => { const u = Math.abs(hx - e.x) / e.hw, v = Math.abs(hy - e.y) / e.hh; return u < 1 && v < 1 ? bell(u * 0.85) * bell(v) : 0; };
+    A.wbL.push(br(browL)); A.wbR.push(br(browR));
+    // bocca
+    const mu = (hx - mouth.x) / mouth.hw, mv = (hy - mouth.y) / mouth.hh;
+    A.wm.push(Math.abs(mu) < 1 && Math.abs(mv) < 1 ? bell(mu * 0.9) * bell(mv * 0.9) : 0); A.mdx.push(clamp(mu, -1, 1));
+  }
+  N = A.hx.length;
+  const F = (k) => Float32Array.from(A[k]);
+  P = { hx: F('hx'), hy: F('hy'), rad: F('rad'), ph: F('ph'), wiL: F('wiL'), wiR: F('wiR'), wlL: F('wlL'), wlR: F('wlR'),
+        wbL: F('wbL'), wbR: F('wbR'), wm: F('wm'), mdx: F('mdx'),
+        x: new Float32Array(N), y: new Float32Array(N), vx: new Float32Array(N), vy: new Float32Array(N) };
+  for (let i = 0; i < N; i++) { const t = rnd() * 6.283, r = 500 + rnd() * 600; P.x[i] = IW / 2 + Math.cos(t) * r; P.y[i] = IH / 2 + Math.sin(t) * r; }
+}
+
+/* ---- layout: su schermo largo il volto sta a destra, su telefono sopra il nome ---- */
+let wide = true;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const r = canvas.getBoundingClientRect(); W = r.width; H = r.height;
+  canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+  wide = W >= 900;
+  if (wide) { scale = Math.min(W * 0.46 / IW, (H - 76) / IH); ox = W * 0.67 - IW * scale / 2; oy = Math.max(52, (H - IH * scale) / 2 + 18); }
+  else { const textH = Math.min(170, H * 0.26); scale = Math.min(W * 0.9 / IW, (H - textH - 56) / IH); ox = (W - IW * scale) / 2; oy = 52; }
+}
+
+/* ---- sguardo, espressioni, input ---- */
+const gaze = { x: 0, y: 0, tx: 0, ty: 0 };
+const ptr = { x: -9999, y: -9999, on: false };
+const KEYS = ['smile', 'brow', 'squintL', 'squintR'];
+const ex = { blink: 0 }, exT = {};
+KEYS.forEach((k) => { ex[k] = 0; exT[k] = 0; });
+const EXPRESSIONS = [
+  { smile: 0.35, brow: 0.1,  squintL: 0.05, squintR: 0.05 },   // base: appena sorridente
+  { smile: 1,    brow: 0.3,  squintL: 0.4,  squintR: 0.4 },    // sorriso grande
+  { smile: 0.8,  brow: 0.2,  squintL: 1,    squintR: 0 },      // occhiolino
+  { smile: 0.5,  brow: 1,    squintL: -0.3, squintR: -0.3 },   // sorpresa
+  { smile: 0.3,  brow: 0.65, squintL: 0,    squintR: 0.3 },    // curioso
+  { smile: 1,    brow: 0.5,  squintL: 0.75, squintR: 0.75 },   // risata
+];
+let exIdx = 0, nextEx = performance.now() + 2500, lastInput = 0;
+function setExpression(i) {
+  exIdx = ((i % EXPRESSIONS.length) + EXPRESSIONS.length) % EXPRESSIONS.length;
+  KEYS.forEach((k) => { exT[k] = EXPRESSIONS[exIdx][k]; });
+  nextEx = performance.now() + (exIdx === 0 ? 2200 + Math.random() * 1800 : 1700 + Math.random() * 1300);
+}
+setExpression(0); KEYS.forEach((k) => { ex[k] = exT[k]; });
+let nextBlink = performance.now() + 2500, blinkT = -1;
+
+function setGazeFromPointer(cx, cy) {
+  const r = canvas.getBoundingClientRect();
+  gaze.tx = clamp((cx - (r.left + ox + CONFIG.center.x * scale)) / (r.width * 0.35), -1, 1);
+  gaze.ty = clamp((cy - (r.top + oy + CONFIG.center.y * scale)) / (r.height * 0.35), -1, 1);
+  ptr.x = cx - r.left; ptr.y = cy - r.top; ptr.on = true; lastInput = performance.now();
+}
+window.addEventListener('pointermove', (e) => setGazeFromPointer(e.clientX, e.clientY), { passive: true });
+window.addEventListener('pointerleave', () => { ptr.on = false; });
+function burst(cx, cy) {                                  // al tocco le particelle esplodono e si ricompongono
+  if (!P) return;
+  const bx = (cx - ox) / scale, by = (cy - oy) / scale, BR = 280;
+  for (let i = 0; i < N; i++) {
+    const dx = P.x[i] - bx, dy = P.y[i] - by, d2 = dx * dx + dy * dy;
+    if (d2 < BR * BR && d2 > 0.01) { const d = Math.sqrt(d2), k = 1 - d / BR; P.vx[i] += dx / d * k * 640; P.vy[i] += dy / d * k * 640; }
+  }
+}
+canvas.addEventListener('pointercancel', () => { ptr.on = false; });
+canvas.addEventListener('pointerdown', (e) => { setGazeFromPointer(e.clientX, e.clientY); burst(ptr.x, ptr.y); setExpression(exIdx === 0 ? 1 + Math.floor(Math.random() * (EXPRESSIONS.length - 1)) : exIdx + 1); });
+canvas.addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') ptr.on = false; });
+
+let tiltBase = null;
+function onTilt(e) {
+  if (e.gamma == null || e.beta == null) return;
+  if (!tiltBase) tiltBase = { b: e.beta };
+  gaze.tx = clamp(e.gamma / 28, -1, 1); gaze.ty = clamp((e.beta - tiltBase.b) / 24, -1, 1); lastInput = performance.now();
+}
+const gyroBtn = document.getElementById('gyro');
+function enableTilt() { window.addEventListener('deviceorientation', onTilt, true); gyroBtn.style.display = 'none'; }
+if (window.DeviceOrientationEvent && matchMedia('(pointer: coarse)').matches) {
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    gyroBtn.style.display = 'inline-block';
+    gyroBtn.addEventListener('click', async () => { try { if ((await DeviceOrientationEvent.requestPermission()) === 'granted') enableTilt(); } catch (_) {} });
+  } else enableTilt();
+}
+
+/* ---- simulazione e disegno ---- */
+let last = performance.now(), t0 = last;
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!P || document.body.classList.contains('lock')) { last = now; return; }
+  const dt = Math.min(0.04, (now - last) / 1000); last = now;
+  const tt = (now - t0) / 1000;
+
+  if (now - lastInput > 4000) { gaze.tx = Math.sin(tt * 0.9) * 0.75; gaze.ty = Math.sin(tt * 0.6 + 1) * 0.3; }
+  const g = 1 - Math.pow(0.000002, dt);                    // sguardo veloce
+  gaze.x += (gaze.tx - gaze.x) * g; gaze.y += (gaze.ty - gaze.y) * g;
+
+  if (now > nextEx) setExpression(exIdx === 0 ? 1 + Math.floor(Math.random() * (EXPRESSIONS.length - 1)) : 0);
+  const ke = 1 - Math.pow(0.004, dt);
+  KEYS.forEach((k) => { ex[k] += (exT[k] - ex[k]) * ke; });
+  if (blinkT < 0 && now > nextBlink) blinkT = 0;
+  if (blinkT >= 0) { blinkT += dt / 0.17; ex.blink = Math.sin(clamp(blinkT, 0, 1) * Math.PI); if (blinkT >= 1) { blinkT = -1; ex.blink = 0; nextBlink = now + 2200 + Math.random() * 4200; } }
+
+  const { eyeL, eyeR } = CONFIG;
+  const sm = ex.smile, br = ex.brow;
+  const closeL = clamp(Math.max(ex.blink, ex.squintL), -0.4, 1), closeR = clamp(Math.max(ex.blink, ex.squintR), -0.4, 1);
+  const irisDX = gaze.x * 9, irisDY = gaze.y * 5;
+  const px = (ptr.x - ox) / scale, py = (ptr.y - oy) / scale, R = 130, R2 = R * R;
+  const kmax = (0.85 / dt) * (0.85 / dt);                  // oltre questa rigidità l'integrazione esplode
+  const kS = Math.min(60 + 300 * smooth(0, 1.8, tt), kmax), cD = 2 * Math.sqrt(kS) * 0.62;
+  const { hx, hy, rad, ph, wiL, wiR, wlL, wlR, wbL, wbR, wm, mdx, x, y, vx, vy } = P;
+  const mouthY = CONFIG.mouth.y;
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0b0b0b'; ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    let tx = hx[i], ty = hy[i];
+    // iridi (le palpebre restano al loro posto)
+    const a = wiL[i], b = wiR[i];
+    if (a > 0) { tx += irisDX * a; ty += irisDY * a; }
+    if (b > 0) { tx += irisDX * b; ty += irisDY * b; }
+    // palpebre: si chiudono verso la linea dell'occhio
+    if (wlL[i] > 0) ty += (eyeL.cy - ty) * closeL * wlL[i] * 0.93;
+    if (wlR[i] > 0) ty += (eyeR.cy - ty) * closeR * wlR[i] * 0.93;
+    // sopracciglia
+    ty -= (wbL[i] + wbR[i]) * br * 11;
+    // sorriso: angoli in su e un po' all'esterno
+    const m = wm[i];
+    if (m > 0) { const q = Math.abs(mdx[i]); ty -= m * sm * (q * q * 20 - 3); tx += m * sm * mdx[i] * 8; }
+    // il respiro: la materia non sta mai ferma
+    tx += Math.sin(tt * 1.6 + hy[i] * 0.02 + ph[i]) * 1.1 + Math.sin(tt * 3.1 + ph[i] * 2) * 0.4;
+    ty += Math.cos(tt * 1.4 + hx[i] * 0.02 + ph[i]) * 1.1 + Math.cos(tt * 2.7 + ph[i] * 3) * 0.4 + Math.sin(tt * 1.2) * 1.4 * (hy[i] / IH);
+    // il cursore sposta le particelle come sabbia
+    if (ptr.on) {
+      const dx = x[i] - px, dy = y[i] - py, d2 = dx * dx + dy * dy;
+      if (d2 < R2 && d2 > 0.01) { const d = Math.sqrt(d2), k = 1 - d / R, f = k * k * 60; tx += dx / d * f - dy / d * f * 0.45; ty += dy / d * f + dx / d * f * 0.45; }
+    }
+    const iris = a > 0 || b > 0, kk = iris ? Math.min(kS * (1 + 1.6 * Math.max(a, b)), kmax) : kS, cc = iris ? 2 * Math.sqrt(kk) * 0.9 : cD;   // iridi più rigide = più rapide
+    vx[i] += ((tx - x[i]) * kk - cc * vx[i]) * dt; vy[i] += ((ty - y[i]) * kk - cc * vy[i]) * dt;
+    x[i] += vx[i] * dt; y[i] += vy[i] * dt;
+    const r = Math.max(0.5, rad[i] * scale), cx = ox + x[i] * scale, cy = oy + y[i] * scale;
+    ctx.moveTo(cx + r, cy); ctx.arc(cx, cy, r, 0, 6.2832);
+  }
+  ctx.fill();
+}
+
+const portrait = new Image();
+portrait.onload = () => { resize(); build(portrait); resize(); requestAnimationFrame(frame); };
+portrait.onerror = () => { console.error('portrait image not found'); };
+portrait.src = CONFIG.art;
+window.addEventListener('resize', resize);
+window.__setExpression = setExpression;
+window.__setGaze = (x, y) => { gaze.tx = x; gaze.ty = y; lastInput = performance.now() + 1e9; };
+</script>
+</body>
+</html>
