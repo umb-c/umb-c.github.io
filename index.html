@@ -405,19 +405,31 @@ canvas.addEventListener('pointercancel', () => { ptr.on = false; });
 canvas.addEventListener('pointerdown', (e) => { setGazeFromPointer(e.clientX, e.clientY); burst(ptr.x, ptr.y); setExpression(exIdx === 0 ? 1 + Math.floor(Math.random() * (EXPRESSIONS.length - 1)) : exIdx + 1); });
 canvas.addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') ptr.on = false; });
 
-let tiltBase = null;
-function onTilt(e) {
-  if (e.gamma == null || e.beta == null) return;
-  if (!tiltBase) tiltBase = { b: e.beta };
-  gaze.tx = clamp(e.gamma / 28, -1, 1); gaze.ty = clamp((e.beta - tiltBase.b) / 24, -1, 1); lastInput = performance.now();
-}
+let tiltBase = null, tiltOn = false, tiltAsked = false, tiltEvents = 0;
 const gyroBtn = document.getElementById('gyro');
-function enableTilt() { window.addEventListener('deviceorientation', onTilt, true); gyroBtn.style.display = 'none'; }
-if (window.DeviceOrientationEvent && matchMedia('(pointer: coarse)').matches) {
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+const dbg = /[?&]debug\b/.test(location.search) ? Object.assign(document.createElement('div'), { id: 'dbg' }) : null;
+if (dbg) { dbg.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99;font:12px/1.4 monospace;background:#111;color:#fff;padding:6px 8px;border-radius:6px;max-width:90vw'; document.body.appendChild(dbg); }
+function onTilt(e) {
+  tiltEvents++;
+  if (dbg) dbg.textContent = 'tilt eventi ' + tiltEvents + ' · gamma ' + (e.gamma == null ? '-' : e.gamma.toFixed(0)) + ' · beta ' + (e.beta == null ? '-' : e.beta.toFixed(0));
+  if (e.gamma == null || e.beta == null) return;
+  gyroBtn.style.display = 'none';                                                              // i sensori rispondono: il pulsante non serve
+  if (tiltBase == null) tiltBase = e.beta; else tiltBase += (e.beta - tiltBase) * 0.004;       // si ricalibra su come tieni il telefono
+  gaze.tx = clamp(e.gamma / 15, -1, 1); gaze.ty = clamp((e.beta - tiltBase) / 12, -1, 1); lastInput = performance.now();
+}
+function enableTilt() { if (tiltOn) return; tiltOn = true; window.addEventListener('deviceorientation', onTilt, true); }
+async function askTilt() {
+  tiltAsked = true;
+  try { const r = await DeviceOrientationEvent.requestPermission(); if (dbg) dbg.textContent = 'permesso: ' + r; } catch (err) { if (dbg) dbg.textContent = 'permesso errore: ' + err; }
+}
+if (window.DeviceOrientationEvent) {
+  enableTilt();                                                                // se il telefono non chiede il permesso (Android) funziona subito
+  if (typeof DeviceOrientationEvent.requestPermission === 'function' && matchMedia('(pointer: coarse)').matches) {   // iPhone: serve un gesto dell'utente
     gyroBtn.style.display = 'inline-block';
-    gyroBtn.addEventListener('click', async () => { try { if ((await DeviceOrientationEvent.requestPermission()) === 'granted') enableTilt(); } catch (_) {} });
-  } else enableTilt();
+    gyroBtn.addEventListener('click', askTilt);
+    document.addEventListener('click', () => { if (!tiltAsked && tiltEvents === 0) askTilt(); }, true);   // anche il primo tocco qualsiasi chiede il permesso
+  }
+  if (dbg) setTimeout(() => { if (!tiltEvents) dbg.textContent = 'nessun evento dal sensore (permesso negato o sensore non disponibile)'; }, 3000);
 }
 
 /* ---- simulazione e disegno ---- */
@@ -486,6 +498,7 @@ portrait.onload = () => { resize(); build(portrait); resize(); requestAnimationF
 portrait.onerror = () => { console.error('portrait image not found'); };
 portrait.src = CONFIG.art;
 window.addEventListener('resize', resize);
+window.__gaze = gaze;
 window.__setExpression = setExpression;
 window.__setGaze = (x, y) => { gaze.tx = x; gaze.ty = y; lastInput = performance.now() + 1e9; };
 </script>
